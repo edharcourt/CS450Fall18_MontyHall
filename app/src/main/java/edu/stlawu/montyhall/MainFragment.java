@@ -3,6 +3,8 @@ package edu.stlawu.montyhall;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,9 @@ import android.view.ViewGroup;
  */
 public class MainFragment extends Fragment {
 
+    public static final String PREF_NAME = "MontyHall";
+    public static final String NEW_CLICKED = "NEWCLICKED";
+
     private OnFragmentInteractionListener mListener;
 
     public MainFragment() {
@@ -31,6 +36,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -43,24 +49,40 @@ public class MainFragment extends Fragment {
 
         View aboutButton = rootView.findViewById(R.id.about_button);
         aboutButton.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   AlertDialog.Builder builder =
-                   new AlertDialog.Builder(getActivity());
-                   builder.setTitle(R.string.about_title_text);
-                   builder.setMessage(R.string.about);
-                   builder.setPositiveButton(R.string.ok,
-                           new DialogInterface.OnClickListener(){
-                               @Override
-                               public void onClick(DialogInterface dialog,
-                                                   int which) {
-                                    return;
-                               }
-                           });
-                   builder.show();
-               }
-           }
-        );
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.about_title_text);
+                builder.setMessage(R.string.about);
+                builder.setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                return;
+                            }
+                        });
+                builder.show();
+            }
+        });
+
+        View newButton = rootView.findViewById(R.id.new_button);
+        newButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+               SharedPreferences.Editor pref_ed =
+                 getActivity().getSharedPreferences(
+                  PREF_NAME, Context.MODE_PRIVATE).edit();
+               pref_ed.putBoolean(NEW_CLICKED, true).apply();
+
+                 Intent intent = new Intent(
+                   getActivity(), GameActivity.class);
+                 getActivity().startActivity(intent);
+             }
+         }
+
+);
 
         return rootView;
     }
